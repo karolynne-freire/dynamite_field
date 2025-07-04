@@ -1,5 +1,6 @@
 from pickle import TRUE
 import random
+import ast 
 
 
 def menu_principal():
@@ -81,4 +82,35 @@ def posicao_escolhida(tabuleiro_campo):
 
     return linha, coluna
 
+
+def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_anterior, arquivo_jogo):
+    with open(arquivo_jogo, "w") as arquivo:
+        arquivo.write(f"Tabuleiro = {tabuleiro_campo}\n")
+        arquivo.write(f"Bombas = {posicoes_bombas}\n")
+        arquivo.write(f"Posições Escolhidas = {posicoes_escolhidas}\n")
+        arquivo.write(f"Tempo de Jogo = {tempo_anterior}\n")
+
+def carregar_jogo(arquivo_salvo):
+    tabuleiro = []
+    bombas = []
+    posicoes = []
+    tempo = 0
+
+    with open(arquivo_salvo, "r") as arquivo:
+        for linha in arquivo:
+            chave, valor = linha.strip().split(" = ")
+            if chave == "Tabuleiro":
+                tabuleiro = ast.literal_eval(valor)
+            elif chave == "Bombas":
+                bombas = ast.literal_eval(valor)
+            elif chave == "Posições Escolhidas":
+                posicoes = ast.literal_eval(valor)
+            elif chave == "Tempo de Jogo":
+                tempo = float(valor)
+
+    return tabuleiro, bombas, posicoes, tempo
+                      
+            
+            
+            
             
