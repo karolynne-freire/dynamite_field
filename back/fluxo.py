@@ -109,8 +109,60 @@ def carregar_jogo(arquivo_salvo):
                 tempo = float(valor)
 
     return tabuleiro, bombas, posicoes, tempo
+
                       
-            
-            
-            
-            
+def cinco_melhores_tempos(arquivo_vitoria):
+    melhores_tempos = []
+
+    with open(arquivo_vitoria, "r") as arquivo:
+        for linha in arquivo:
+            tempos = linha.strip().split(",")
+            for tempo in tempos:
+                if tempo:
+                    try:
+                        melhores_tempos.append(float(tempo))
+                    except ValueError:
+                        pass  
+
+    melhores_tempos.sort()
+    melhores_tempos = melhores_tempos[:5]
+
+    print("Melhores Tempos:")
+
+    posicoes = {
+        1: "Primeiro",
+        2: "Segundo",
+        3: "Terceiro",
+        4: "Quarto",
+        5: "Quinto"
+    }
+
+    for i, tempo in enumerate(melhores_tempos):
+        posicao = posicoes.get(i + 1, f"{i+1}º")
+        print(f"{posicao}: {tempo:.2f} segundos")
+
+# def registrar_vitoria(arquivo_vitoria, nome_jogador, tempo):
+#     with open(arquivo_vitoria, "a") as arquivo:
+#         arquivo.write(f"{nome_jogador},{tempo}\n")
+
+# def cinco_melhores_tempos(arquivo_vitoria):
+#     ranking = []
+
+#     with open(arquivo_vitoria, "r") as arquivo:
+#         for linha in arquivo:
+#             dados = linha.strip().split(",")
+#             if len(dados) == 2:
+#                 nome, tempo_str = dados
+#                 try:
+#                     tempo = float(tempo_str)
+#                     ranking.append((nome, tempo))
+#                 except ValueError:
+#                     continue
+
+#     ranking.sort(key=lambda x: x[1])  # ordena pelo tempo (menor = melhor)
+#     top_5 = ranking[:5]
+
+#     print("MELHORES TEMPOS:")
+#     posicoes = ["PRIMEIRO", "SEGUNDO", "TERCEIRO", "QUARTO", "QUINTO"]
+#     for i, (nome, tempo) in enumerate(top_5):
+#         print(f"{posicoes[i]}: {nome} - {tempo:.2f} segundos")
