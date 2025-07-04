@@ -1,3 +1,7 @@
+from pickle import TRUE
+import random
+
+
 def menu_principal():
     print("--- Jogo Campo Minado ---")
     print("(1) Começar o jogo")
@@ -26,19 +30,55 @@ def criar_tabuleiro(quant_linhas):
     return tabuleiro_campo
 
 
-def mostrar_tabuleiro (tabuleiro_campo):
-    print("\t", end = "")
-    
-    for elemento in range (1, len(tabuleiro_campo[0])+1):
-        print(elemento, end ="\t")
-        
+def mostrar_tabuleiro(tabuleiro_campo):
+    print("\t", end="")
+
+    for coluna in range(1, len(tabuleiro_campo[0]) + 1):
+        print(coluna, end="\t")
     print()
-    
-    for linha in range(len(tabuleiro_campo)):
-        print(linha + 1, end= "\t")
-        
-        for elemento in tabuleiro_campo[linha]:
-            print(elemento, end = "\t")
-        
+
+    for linha_idx, linha in enumerate(tabuleiro_campo):
+        print(linha_idx + 1, end="\t")
+        for elemento in linha:
+            print(elemento, end="\t")
         print()
-        
+
+
+def posicoes_bombas(quant_bombas, tabuleiro_campo):
+    coordenadas_bombas = []
+
+    while len(coordenadas_bombas) != quant_bombas:
+        linha_bomba = random.randint(1, len(tabuleiro_campo))
+        coluna_bomba = random.randint(1, len(tabuleiro_campo[0]))
+
+        if [linha_bomba, coluna_bomba] not in coordenadas_bombas:
+            coordenadas_bombas.append([linha_bomba, coluna_bomba])
+
+    return coordenadas_bombas
+
+def posicao_escolhida(tabuleiro_campo):
+    while True:
+        try:
+            linha = int(input("Digite o número da linha: "))
+
+            if linha < 1 or linha > len(tabuleiro_campo):
+                raise ValueError
+
+            break
+        except ValueError:
+            print(f"A posição da linha deve ser um número inteiro entre 1 e {len(tabuleiro_campo)}!")
+
+    while True:
+        try:
+            coluna = int(input("Digite o número da coluna: "))
+
+            if coluna < 1 or coluna > len(tabuleiro_campo[0]):
+                raise ValueError
+
+            break
+        except ValueError:
+            print(f"A posição da coluna deve ser um número inteiro entre 1 e {len(tabuleiro_campo[0])}!")
+
+    return linha, coluna
+
+            
