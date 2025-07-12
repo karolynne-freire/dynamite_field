@@ -24,11 +24,11 @@ def menu_dificuldade ():
     return opcao
 
 def criar_tabuleiro(quant_linhas):
-    linha_campo = ["*"] * quant_linhas
     tabuleiro_campo = []
 
     for _ in range(quant_linhas):
-        tabuleiro_campo.append(linha_campo[:])
+        linha = ["*"] * quant_linhas
+        tabuleiro_campo.append(linha)
 
     return tabuleiro_campo
 
@@ -159,7 +159,6 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
 
     while True:
         try:
-            print(posicoesBombas)
             mostrar_tabuleiro(tabuleiroCampoMinado)
             linha, coluna = posicao_escolhida(tabuleiroCampoMinado)
             contadorBombasAoRedor = 0
@@ -168,6 +167,7 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
             if listaPosicaoEscolhida in listaPosicoesEscolhidas:
                 os.system("cls")
                 print("Essa posição já foi preenchida!")
+                continue
             else:
                 os.system("cls")
                 listaPosicoesEscolhidas.append(listaPosicaoEscolhida)
@@ -175,7 +175,8 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
             if listaPosicaoEscolhida in posicoesBombas:
                 os.system("cls")
                 for posicaoBomba in posicoesBombas:
-                    tabuleiroCampoMinado[posicaoBomba[0] - 1][posicaoBomba[1] - 1] = "X"
+                    tabuleiroCampoMinado[posicaoBomba[0]][posicaoBomba[1]] = "💣"
+
                 mostrar_tabuleiro(tabuleiroCampoMinado)
                 print("Você perdeu!")
 
@@ -186,15 +187,13 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
                 break
 
             for bomba in posicoesBombas:
-                if (linha + 1) == bomba[0] or (linha - 1) == bomba[0]:
-                    if bomba[1] in [coluna, coluna - 1, coluna + 1]:
-                        contadorBombasAoRedor += 1
-                elif linha == bomba[0]:
-                    if bomba[1] in [coluna - 1, coluna + 1]:
+                if abs(bomba[0] - linha) <= 1 and abs(bomba[1] - coluna) <= 1:
+                    if bomba != [linha, coluna]:
                         contadorBombasAoRedor += 1
 
-            tabuleiroCampoMinado[linha - 1][coluna - 1] = contadorBombasAoRedor
+            tabuleiroCampoMinado[linha][coluna] = contadorBombasAoRedor
 
+        
             if len(listaPosicoesEscolhidas) == ((len(tabuleiroCampoMinado) ** 2) - len(posicoesBombas)):
                 os.system("cls")
                 tempoFinal = time.time()
@@ -215,6 +214,7 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
             nome = input("\nDigite seu nome para salvar o progresso: ").strip()
             salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo, nome)
             break
+
 
 
 def campominado():
