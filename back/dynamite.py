@@ -82,12 +82,14 @@ def posicao_escolhida(tabuleiro_campo):
 
 
 
-def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_anterior, arquivo_jogo):
+def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_anterior, arquivo_jogo, nome_jogador):
     with open(arquivo_jogo, "w") as arquivo:
+        arquivo.write(f"Jogador = {nome_jogador}\n")
         arquivo.write(f"Tabuleiro = {tabuleiro_campo}\n")
         arquivo.write(f"Bombas = {posicoes_bombas}\n")
         arquivo.write(f"Posições Escolhidas = {posicoes_escolhidas}\n")
         arquivo.write(f"Tempo de Jogo = {tempo_anterior}\n")
+
 
 def carregar_jogo(arquivo_salvo):
     tabuleiro = []
@@ -118,36 +120,35 @@ def cinco_melhores_tempos(arquivo_vitoria):
     melhores_tempos = []
 
     with open(arquivo_vitoria, "r") as arquivo:
-        for linha in arquivo:
-            tempos = linha.strip().split(",")
-            for tempo in tempos:
-                if tempo:
-                    try:
-                        melhores_tempos.append(float(tempo))
-                    except ValueError:
-                        pass
+        linhas = arquivo.read().split(",")
+        for linha in linhas:
+            if ":" in linha:
+                try:
+                    nome, tempo = linha.strip().split(":")
+                    melhores_tempos.append((nome, float(tempo)))
+                except ValueError:
+                    pass
 
     if not melhores_tempos:
-        print("Não possui nenhuma posição cadastrada.")
+        print("Não possui nenhuma vitória registrada.")
         return
 
-    melhores_tempos.sort()
+    melhores_tempos.sort(key=lambda x: x[1])
     melhores_tempos = melhores_tempos[:5]
 
-    print("Melhores Tempos:")
+    print("🏆 Melhores Tempos:")
 
     posicoes = {
-        1: "Primeiro",
-        2: "Segundo",
-        3: "Terceiro",
+        1: "🥇 Primeiro",
+        2: "🥈 Segundo",
+        3: "🥉 Terceiro",
         4: "Quarto",
         5: "Quinto"
     }
 
-    for i, tempo in enumerate(melhores_tempos):
+    for i, (nome, tempo) in enumerate(melhores_tempos):
         posicao = posicoes.get(i + 1, f"{i+1}º")
-        print(f"{posicao}: {tempo:.2f} segundos")
-
+        print(f"{posicao}: {nome} - {tempo:.2f} segundos")
 
 
 
@@ -166,8 +167,7 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
 
             if listaPosicaoEscolhida in listaPosicoesEscolhidas:
                 os.system("cls")
-                print("Essa posicao ja foi preenchida!")
-
+                print("Essa posição já foi preenchida!")
             else:
                 os.system("cls")
                 listaPosicoesEscolhidas.append(listaPosicaoEscolhida)
@@ -177,21 +177,20 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
                 for posicaoBomba in posicoesBombas:
                     tabuleiroCampoMinado[posicaoBomba[0] - 1][posicaoBomba[1] - 1] = "X"
                 mostrar_tabuleiro(tabuleiroCampoMinado)
-                print("Voce perdeu")
+                print("Você perdeu!")
+
+                salvar = input("Deseja salvar esta partida? (s/n): ").strip().lower()
+                if salvar == "s":
+                    nome = input("Digite seu nome: ").strip()
+                    salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo, nome)
                 break
 
             for bomba in posicoesBombas:
                 if (linha + 1) == bomba[0] or (linha - 1) == bomba[0]:
-                    if bomba[1] == coluna:
-                        contadorBombasAoRedor += 1
-                    if bomba[1] == coluna - 1:
-                        contadorBombasAoRedor += 1
-                    if bomba[1] == coluna + 1:
+                    if bomba[1] in [coluna, coluna - 1, coluna + 1]:
                         contadorBombasAoRedor += 1
                 elif linha == bomba[0]:
-                    if bomba[1] == coluna - 1:
-                        contadorBombasAoRedor += 1
-                    if bomba[1] == coluna + 1:
+                    if bomba[1] in [coluna - 1, coluna + 1]:
                         contadorBombasAoRedor += 1
 
             tabuleiroCampoMinado[linha - 1][coluna - 1] = contadorBombasAoRedor
@@ -201,20 +200,22 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
                 tempoFinal = time.time()
                 tempoVitoria = (tempoFinal - tempoInicial) + tempoAnterior
 
-                tempos = open(arquivoTemposVitoria, "a")
-                tempos.write(str(round(tempoVitoria, 2)) + ",")
-                tempos.close()
-
                 mostrar_tabuleiro(tabuleiroCampoMinado)
-                print(round(tempoVitoria, 2))
-                print("Parabens, voce ganhou!")
+                print(f"{round(tempoVitoria, 2)} segundos")
+                print("Parabéns, você ganhou!")
+
+                nome = input("Digite seu nome para registrar o tempo: ").strip()
+                with open(arquivoTemposVitoria, "a") as tempos:
+                    tempos.write(f"{nome}:{round(tempoVitoria, 2)},")
                 break
 
         except KeyboardInterrupt:
             tempoFinal = time.time()
             tempoAnterior = (tempoFinal - tempoInicial) + tempoAnterior
-            salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo)
+            nome = input("\nDigite seu nome para salvar o progresso: ").strip()
+            salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo, nome)
             break
+
 
 def campominado():
     print("-----projeto de lógica programacional----")
