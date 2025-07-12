@@ -51,8 +51,8 @@ def posicoes_bombas(quant_bombas, tabuleiro_campo):
     coordenadas_bombas = []
 
     while len(coordenadas_bombas) != quant_bombas:
-        linha_bomba = random.randint(1, len(tabuleiro_campo))
-        coluna_bomba = random.randint(1, len(tabuleiro_campo[0]))
+        linha_bomba = random.randint(0, len(tabuleiro_campo) - 1)
+        coluna_bomba = random.randint(0, len(tabuleiro_campo[0]) - 1)
 
         if [linha_bomba, coluna_bomba] not in coordenadas_bombas:
             coordenadas_bombas.append([linha_bomba, coluna_bomba])
@@ -63,10 +63,8 @@ def posicao_escolhida(tabuleiro_campo):
     while True:
         try:
             linha = int(input("Digite o número da linha: "))
-
             if linha < 1 or linha > len(tabuleiro_campo):
                 raise ValueError
-
             break
         except ValueError:
             print(f"A posição da linha deve ser um número inteiro entre 1 e {len(tabuleiro_campo)}!")
@@ -74,15 +72,14 @@ def posicao_escolhida(tabuleiro_campo):
     while True:
         try:
             coluna = int(input("Digite o número da coluna: "))
-
             if coluna < 1 or coluna > len(tabuleiro_campo[0]):
                 raise ValueError
-
             break
         except ValueError:
             print(f"A posição da coluna deve ser um número inteiro entre 1 e {len(tabuleiro_campo[0])}!")
 
-    return linha, coluna
+    return linha - 1, coluna - 1
+
 
 
 def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_anterior, arquivo_jogo):
@@ -114,6 +111,10 @@ def carregar_jogo(arquivo_salvo):
 
                       
 def cinco_melhores_tempos(arquivo_vitoria):
+    if not os.path.exists(arquivo_vitoria):
+        print("Arquivo de vitórias não encontrado.")
+        return
+
     melhores_tempos = []
 
     with open(arquivo_vitoria, "r") as arquivo:
@@ -124,7 +125,11 @@ def cinco_melhores_tempos(arquivo_vitoria):
                     try:
                         melhores_tempos.append(float(tempo))
                     except ValueError:
-                        pass  
+                        pass
+
+    if not melhores_tempos:
+        print("Não possui nenhuma posição cadastrada.")
+        return
 
     melhores_tempos.sort()
     melhores_tempos = melhores_tempos[:5]
@@ -142,6 +147,8 @@ def cinco_melhores_tempos(arquivo_vitoria):
     for i, tempo in enumerate(melhores_tempos):
         posicao = posicoes.get(i + 1, f"{i+1}º")
         print(f"{posicao}: {tempo:.2f} segundos")
+
+
 
 
 def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampoMinado, tempoAnterior, arquivoTemposVitoria, arquivoJogoSalvo):
