@@ -1,12 +1,14 @@
 from pickle import TRUE
-import random
+import random 
 import ast 
-import os
+import os 
 import time
 
-
+# Exibe o menu principal e retorna a opção escolhida
 def menu_principal():
+    print("=" * 30)
     print("--- Jogo Campo Minado ---")
+    print("=" * 30)
     print("(1) Começar o jogo")
     print("(2) Recomeçar o último jogo")
     print("(3) Os cinco melhores tempos")
@@ -15,7 +17,11 @@ def menu_principal():
     opcao = input("Escolha uma das opções acima: ")
     return opcao
 
+# Exibe o menu de escolha do nível de dificuldade e retorna a opção escolhida
 def menu_dificuldade ():
+    print("=" * 30)
+    print("       Nível de Dificuldade")
+    print("=" * 30)
     print("\n(1) Fácil")
     print("(2) Médio")
     print("(3) Voltar")
@@ -23,6 +29,7 @@ def menu_dificuldade ():
     opcao = input("Escolha uma das opções acima: ")
     return opcao
 
+# Cria um tabuleiro com o número de linhas informado
 def criar_tabuleiro(quant_linhas):
     tabuleiro_campo = []
 
@@ -32,7 +39,7 @@ def criar_tabuleiro(quant_linhas):
 
     return tabuleiro_campo
 
-
+# Exibe o tabuleiro na tela, formatado com índices de linha e coluna
 def mostrar_tabuleiro(tabuleiro_campo):
     print("\t", end="")
 
@@ -46,7 +53,7 @@ def mostrar_tabuleiro(tabuleiro_campo):
             print(elemento, end="\t")
         print()
 
-
+# Gera posições aleatórias para as bombas
 def posicoes_bombas(quant_bombas, tabuleiro_campo):
     coordenadas_bombas = []
 
@@ -81,7 +88,7 @@ def posicao_escolhida(tabuleiro_campo):
     return linha - 1, coluna - 1
 
 
-
+# Salva o estado atual do jogo em um arquivo de texto
 def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_anterior, arquivo_jogo, nome_jogador):
  with open(arquivo_jogo, "w", encoding="utf-8") as arquivo:
     arquivo.write(f"Jogador = {nome_jogador}\n")
@@ -92,7 +99,7 @@ def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_ant
 
 
 
-
+# Carrega o jogo salvo, convertendo as strings de volta para listas/valores originais
 def carregar_jogo(arquivo_salvo):
     tabuleiro = []
     bombas = []
@@ -117,7 +124,7 @@ def carregar_jogo(arquivo_salvo):
     return tabuleiro, bombas, posicoes, tempo, nome_jogador
 
 
-                      
+# Lê o arquivo de tempos de vitória e exibe os 5 melhores tempos                      
 def cinco_melhores_tempos(arquivo_vitoria):
     if not os.path.exists(arquivo_vitoria):
         print("❌ Não possui nenhum arquivo de vitórias registrado.")
@@ -156,69 +163,86 @@ def cinco_melhores_tempos(arquivo_vitoria):
         posicao = posicoes.get(i + 1, f"{i+1}º")
         print(f"{posicao}: {nome} - {tempo:.2f} segundos")
 
+# Limpa o terminal, considerando se o sistema é Windows/Linux/Mac
+def limpar_tela():
+    os.system("cls" if os.name == "nt" else "clear")
 
-def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampoMinado, tempoAnterior, arquivoTemposVitoria, arquivoJogoSalvo, nomeJogador):
+# Loop principal do jogo: jogador escolhe posições até vencer ou perder (acertar a bomba)
+# Verifica se a posição escolhida já foi usada
+# Conta bombas ao redor e atualiza o tabuleiro
+# Detecta vitória e calcula tempo total
+def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_campo_minado, tempo_anterior, arquivo_tempos_vitoria, arquivo_jogo_salvo, nome_jogador):
     print("Aperte CTRL+C, a qualquer momento, para encerrar o jogo!")
-    listaPosicoesEscolhidas = posicoesEscolhidas
-    tempoInicial = time.time()
+    lista_posicoes_escolhidas = posicoes_escolhidas
+    tempo_inicial = time.time()
 
     while True:
         try:
-            mostrar_tabuleiro(tabuleiroCampoMinado)
-            linha, coluna = posicao_escolhida(tabuleiroCampoMinado)
-            contadorBombasAoRedor = 0
-            listaPosicaoEscolhida = [linha, coluna]
+            mostrar_tabuleiro(tabuleiro_campo_minado)
+            linha, coluna = posicao_escolhida(tabuleiro_campo_minado)
+            contador_bombas_ao_redor = 0
+            lista_posicao_escolhida = [linha, coluna]
 
-            if listaPosicaoEscolhida in listaPosicoesEscolhidas:
-                os.system("cls")
+            if lista_posicao_escolhida in lista_posicoes_escolhidas:
+                limpar_tela()
                 print("Essa posição já foi preenchida!")
                 continue
             else:
-                os.system("cls")
-                listaPosicoesEscolhidas.append(listaPosicaoEscolhida)
+                limpar_tela()
+                lista_posicoes_escolhidas.append(lista_posicao_escolhida)
 
-            if listaPosicaoEscolhida in posicoesBombas:
-                os.system("cls")
-                for posicaoBomba in posicoesBombas:
-                    tabuleiroCampoMinado[posicaoBomba[0]][posicaoBomba[1]] = "💣"
-                mostrar_tabuleiro(tabuleiroCampoMinado)
-                print("Você perdeu!")
+            # Verifica se o jogador perdeu
+            if lista_posicao_escolhida in posicoes_bombas:
+                limpar_tela()
+                for posicao_bomba in posicoes_bombas:
+                    tabuleiro_campo_minado[posicao_bomba[0]][posicao_bomba[1]] = "💣"
+                mostrar_tabuleiro(tabuleiro_campo_minado)
+                print("=" * 30)
+                print("⚠️ Você perdeu! Cuidado na próxima vez!")
+                print("=" * 30)
 
                 salvar = input("Deseja salvar esta partida? (s/n): ").strip().lower()
                 if salvar == "s":
-                    salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo, nomeJogador)
+                    salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_anterior, arquivo_jogo_salvo, nome_jogador)
                 break
 
-            for bomba in posicoesBombas:
+            for bomba in posicoes_bombas:
                 if abs(bomba[0] - linha) <= 1 and abs(bomba[1] - coluna) <= 1:
                     if bomba != [linha, coluna]:
-                        contadorBombasAoRedor += 1
+                        contador_bombas_ao_redor += 1
 
-            tabuleiroCampoMinado[linha][coluna] = contadorBombasAoRedor
+            tabuleiro_campo_minado[linha][coluna] = contador_bombas_ao_redor
 
-            if len(listaPosicoesEscolhidas) == ((len(tabuleiroCampoMinado) ** 2) - len(posicoesBombas)):
-                os.system("cls")
-                tempoFinal = time.time()
-                tempoVitoria = (tempoFinal - tempoInicial) + tempoAnterior
-                mostrar_tabuleiro(tabuleiroCampoMinado)
-                print(f"{round(tempoVitoria, 2)} segundos")
-                print("Parabéns, você ganhou!")
-                with open(arquivoTemposVitoria, "a", encoding="utf-8") as tempos:
-                    tempos.write(f"{nomeJogador}:{round(tempoVitoria, 2)},")
+            # Verifica se o jogador ganhou
+            if len(lista_posicoes_escolhidas) == ((len(tabuleiro_campo_minado) ** 2) - len(posicoes_bombas)):
+                limpar_tela()
+                tempo_final = time.time()
+                tempo_vitoria = (tempo_final - tempo_inicial) + tempo_anterior
+                mostrar_tabuleiro(tabuleiro_campo_minado)
+                print("=" * 40)
+                print(f"{round(tempo_vitoria, 2)} segundos")
+                print(" 🎉 Parabéns, você ganhou o jogo! 🎉")
+                print("=" * 40)
+                with open(arquivo_tempos_vitoria, "a", encoding="utf-8") as tempos:
+                    tempos.write(f"{nome_jogador}:{round(tempo_vitoria, 2)},")
                 break
 
+        # Salva o jogo se o jogador sair ou pressionar Ctrl+C
         except KeyboardInterrupt:
-            tempoFinal = time.time()
-            tempoAnterior = (tempoFinal - tempoInicial) + tempoAnterior
-            salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo, nomeJogador)
+            tempo_final = time.time()
+            tempo_anterior = (tempo_final - tempo_inicial) + tempo_anterior
+            salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_anterior, arquivo_jogo_salvo, nome_jogador)
             break
 
 
 
-
+# Função principal do jogo, possui a lógica do Campo Minado
+# Controla o fluxo de menus e chamadas de funções com base nas escolhas do jogador
 def campominado():
-    print("-----projeto de lógica programacional----")
+    print("=" * 40)
+    print("-----PROJETO DE LÓGICA PROGRAMÁVEL----")
     print("-----Karolynne, Ruth e Erwin-----")
+    print("=" * 40)
 
     nomeJogador = input("Digite seu nome: ").strip()
 
@@ -234,12 +258,12 @@ def campominado():
 
     while True:
         opcao1 = menu_principal()
-        os.system("cls")
+        limpar_tela()
 
         if opcao1 == "1":
             while True:
                 opcao2 = menu_dificuldade()
-                os.system("cls")
+                limpar_tela()
 
                 if opcao2 == "1":
                     listaPosicoesEscolhidas4x4 = []
@@ -279,7 +303,7 @@ def campominado():
         elif opcao1 == "2":
             while True:
                 opcao3 = menu_dificuldade()
-                os.system("cls")
+                limpar_tela()
 
                 if opcao3 == "1":
                     try:
@@ -333,7 +357,7 @@ def campominado():
         elif opcao1 == "3":
             while True:
                 opcao4 = menu_dificuldade()
-                os.system("cls")
+                limpar_tela()
 
                 if opcao4 == "1":
                     cinco_melhores_tempos("tempovitoria4bombas.txt")
@@ -349,6 +373,7 @@ def campominado():
         else:
             print("Opção inválida!")
 
+# Inicia o jogo se o arquivo for executado
 if __name__ == "__main__":
     campominado()
          
