@@ -83,12 +83,14 @@ def posicao_escolhida(tabuleiro_campo):
 
 
 def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_anterior, arquivo_jogo, nome_jogador):
-    with open(arquivo_jogo, "w") as arquivo:
-        arquivo.write(f"Jogador = {nome_jogador}\n")
-        arquivo.write(f"Tabuleiro = {tabuleiro_campo}\n")
-        arquivo.write(f"Bombas = {posicoes_bombas}\n")
-        arquivo.write(f"Posições Escolhidas = {posicoes_escolhidas}\n")
-        arquivo.write(f"Tempo de Jogo = {tempo_anterior}\n")
+ with open(arquivo_jogo, "w", encoding="utf-8") as arquivo:
+    arquivo.write(f"Jogador = {nome_jogador}\n")
+    arquivo.write(f"Tabuleiro = {tabuleiro_campo}\n")
+    arquivo.write(f"Bombas = {posicoes_bombas}\n")
+    arquivo.write(f"Posições Escolhidas = {posicoes_escolhidas}\n")
+    arquivo.write(f"Tempo de Jogo = {tempo_anterior}\n")
+
+
 
 
 def carregar_jogo(arquivo_salvo):
@@ -98,7 +100,7 @@ def carregar_jogo(arquivo_salvo):
     tempo = 0
     nome_jogador = ""
 
-    with open(arquivo_salvo, "r") as arquivo:
+    with open(arquivo_salvo, "r", encoding="utf-8") as arquivo:
         for linha in arquivo:
             chave, valor = linha.strip().split(" = ")
             if chave == "Jogador":
@@ -155,7 +157,7 @@ def cinco_melhores_tempos(arquivo_vitoria):
         print(f"{posicao}: {nome} - {tempo:.2f} segundos")
 
 
-def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampoMinado, tempoAnterior, arquivoTemposVitoria, arquivoJogoSalvo, nomeJogador=""):
+def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampoMinado, tempoAnterior, arquivoTemposVitoria, arquivoJogoSalvo, nomeJogador):
     print("Aperte CTRL+C, a qualquer momento, para encerrar o jogo!")
     listaPosicoesEscolhidas = posicoesEscolhidas
     tempoInicial = time.time()
@@ -178,15 +180,13 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
             if listaPosicaoEscolhida in posicoesBombas:
                 os.system("cls")
                 for posicaoBomba in posicoesBombas:
-                    tabuleiroCampoMinado[posicaoBomba[0]][posicaoBomba[1]] = "x"
-
+                    tabuleiroCampoMinado[posicaoBomba[0]][posicaoBomba[1]] = "💣"
                 mostrar_tabuleiro(tabuleiroCampoMinado)
                 print("Você perdeu!")
 
                 salvar = input("Deseja salvar esta partida? (s/n): ").strip().lower()
                 if salvar == "s":
-                    nome = input("Digite seu nome: ").strip()
-                    salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo, nome)
+                    salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo, nomeJogador)
                 break
 
             for bomba in posicoesBombas:
@@ -196,34 +196,31 @@ def verificarPosicaoEscolhida(posicoesBombas, posicoesEscolhidas, tabuleiroCampo
 
             tabuleiroCampoMinado[linha][coluna] = contadorBombasAoRedor
 
-        
             if len(listaPosicoesEscolhidas) == ((len(tabuleiroCampoMinado) ** 2) - len(posicoesBombas)):
                 os.system("cls")
                 tempoFinal = time.time()
                 tempoVitoria = (tempoFinal - tempoInicial) + tempoAnterior
-
                 mostrar_tabuleiro(tabuleiroCampoMinado)
                 print(f"{round(tempoVitoria, 2)} segundos")
                 print("Parabéns, você ganhou!")
-
-                nome = input("Digite seu nome para registrar o tempo: ").strip()
-                with open(arquivoTemposVitoria, "a") as tempos:
-                    tempos.write(f"{nome}:{round(tempoVitoria, 2)},")
+                with open(arquivoTemposVitoria, "a", encoding="utf-8") as tempos:
+                    tempos.write(f"{nomeJogador}:{round(tempoVitoria, 2)},")
                 break
 
         except KeyboardInterrupt:
             tempoFinal = time.time()
             tempoAnterior = (tempoFinal - tempoInicial) + tempoAnterior
-            if not nomeJogador:
-             nomeJogador = input("\nDigite seu nome para salvar o progresso: ").strip()
             salvar_jogo(tabuleiroCampoMinado, posicoesBombas, listaPosicoesEscolhidas, tempoAnterior, arquivoJogoSalvo, nomeJogador)
             break
 
 
 
-def campominado(): 
+
+def campominado():
     print("-----projeto de lógica programacional----")
     print("-----Karolynne, Ruth e Erwin-----")
+
+    nomeJogador = input("Digite seu nome: ").strip()  # ⬅ Nome pedido uma vez
 
     tabuleiroCampoMinado4x4 = []
     posicoesBombasSorteadas4x4 = []
@@ -234,7 +231,6 @@ def campominado():
     listaPosicoesEscolhidas6x6 = []
 
     tempoAnterior = 0
-    nomeJogador = ""
 
     while True:
         opcao1 = menu_principal()
@@ -248,39 +244,21 @@ def campominado():
                 if opcao2 == "1":
                     listaPosicoesEscolhidas4x4 = []
                     tempoAnterior = 0
-                    nomeJogador = input("Digite seu nome: ").strip()
                     tabuleiroCampoMinado4x4 = criar_tabuleiro(4)
                     posicoesBombasSorteadas4x4 = posicoes_bombas(6, tabuleiroCampoMinado4x4)
-                    verificarPosicaoEscolhida(
-                        posicoesBombasSorteadas4x4,
-                        listaPosicoesEscolhidas4x4,
-                        tabuleiroCampoMinado4x4,
-                        tempoAnterior,
-                        "tempovitoria4bombas.txt",
-                        "ultimojogo4x4.txt",
-                        nomeJogador
-                    )
+                    verificarPosicaoEscolhida(posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tabuleiroCampoMinado4x4, tempoAnterior, "tempovitoria4bombas.txt", "ultimojogo4x4.txt", nomeJogador)
 
                 elif opcao2 == "2":
                     listaPosicoesEscolhidas6x6 = []
                     tempoAnterior = 0
-                    nomeJogador = input("Digite seu nome: ").strip()
                     tabuleiroCampoMinado6x6 = criar_tabuleiro(6)
                     posicoesBombasSorteadas6x6 = posicoes_bombas(10, tabuleiroCampoMinado6x6)
-                    verificarPosicaoEscolhida(
-                        posicoesBombasSorteadas6x6,
-                        listaPosicoesEscolhidas6x6,
-                        tabuleiroCampoMinado6x6,
-                        tempoAnterior,
-                        "tempovitoria6bombas.txt",
-                        "ultimojogo6x6.txt",
-                        nomeJogador
-                    )
+                    verificarPosicaoEscolhida(posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tabuleiroCampoMinado6x6, tempoAnterior, "tempovitoria6bombas.txt", "ultimojogo6x6.txt", nomeJogador)
 
                 elif opcao2 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("opcao Invalida!")
 
         elif opcao1 == "2":
             while True:
@@ -288,33 +266,17 @@ def campominado():
                 os.system("cls")
 
                 if opcao3 == "1":
-                    tabuleiroCampoMinado4x4, posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tempoAnterior, nomeJogador = carregar_jogo("ultimojogo4x4.txt")
-                    verificarPosicaoEscolhida(
-                        posicoesBombasSorteadas4x4,
-                        listaPosicoesEscolhidas4x4,
-                        tabuleiroCampoMinado4x4,
-                        tempoAnterior,
-                        "tempovitoria4bombas.txt",
-                        "ultimojogo4x4.txt",
-                        nomeJogador
-                    )
+                    tabuleiroCampoMinado4x4, posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tempoAnterior = carregar_jogo("ultimojogo4x4.txt")
+                    verificarPosicaoEscolhida(posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tabuleiroCampoMinado4x4, tempoAnterior, "temposvitoria4bombas.txt", "ultimojogo4x4.txt", nomeJogador)
 
                 elif opcao3 == "2":
-                    tabuleiroCampoMinado6x6, posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tempoAnterior, nomeJogador = carregar_jogo("ultimojogo6x6.txt")
-                    verificarPosicaoEscolhida(
-                        posicoesBombasSorteadas6x6,
-                        listaPosicoesEscolhidas6x6,
-                        tabuleiroCampoMinado6x6,
-                        tempoAnterior,
-                        "tempovitoria6bombas.txt",
-                        "ultimojogo6x6.txt",
-                        nomeJogador
-                    )
+                    tabuleiroCampoMinado6x6, posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tempoAnterior = carregar_jogo("ultimojogo6x6.txt")
+                    verificarPosicaoEscolhida(posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tabuleiroCampoMinado6x6, tempoAnterior, "temposvitoria6bombas.txt", "ultimojogo6x6.txt", nomeJogador)
 
                 elif opcao3 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("Opcao Invalida!")
 
         elif opcao1 == "3":
             while True:
@@ -322,21 +284,19 @@ def campominado():
                 os.system("cls")
 
                 if opcao4 == "1":
-                    cinco_melhores_tempos("tempovitoria4bombas.txt")
-
+                    cinco_melhores_tempos("temposvitoria4bombas.txt")
                 elif opcao4 == "2":
-                    cinco_melhores_tempos("tempovitoria6bombas.txt")
-
+                    cinco_melhores_tempos("temposvitoria6bombas.txt")
                 elif opcao4 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("Opcao Invalida!")
 
         elif opcao1 == "4":
             break
-
         else:
-            print("Opção inválida!")
+            print("Opcao Invalida!")
+
 
 if __name__ == "__main__":
     campominado()
