@@ -120,7 +120,7 @@ def carregar_jogo(arquivo_salvo):
                       
 def cinco_melhores_tempos(arquivo_vitoria):
     if not os.path.exists(arquivo_vitoria):
-        print("Arquivo de vitórias não encontrado.")
+        print("❌ Não possui nenhum arquivo de vitórias registrado.")
         return
 
     melhores_tempos = []
@@ -136,7 +136,7 @@ def cinco_melhores_tempos(arquivo_vitoria):
                     pass
 
     if not melhores_tempos:
-        print("Não possui nenhuma vitória registrada.")
+        print(" ❌ Não possui nenhuma vitória registrada.")
         return
 
     melhores_tempos.sort(key=lambda x: x[1])
@@ -220,7 +220,7 @@ def campominado():
     print("-----projeto de lógica programacional----")
     print("-----Karolynne, Ruth e Erwin-----")
 
-    nomeJogador = input("Digite seu nome: ").strip()  # ⬅ Nome pedido uma vez
+    nomeJogador = input("Digite seu nome: ").strip()
 
     tabuleiroCampoMinado4x4 = []
     posicoesBombasSorteadas4x4 = []
@@ -246,19 +246,35 @@ def campominado():
                     tempoAnterior = 0
                     tabuleiroCampoMinado4x4 = criar_tabuleiro(4)
                     posicoesBombasSorteadas4x4 = posicoes_bombas(6, tabuleiroCampoMinado4x4)
-                    verificarPosicaoEscolhida(posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tabuleiroCampoMinado4x4, tempoAnterior, "tempovitoria4bombas.txt", "ultimojogo4x4.txt", nomeJogador)
+                    verificarPosicaoEscolhida(
+                        posicoesBombasSorteadas4x4,
+                        listaPosicoesEscolhidas4x4,
+                        tabuleiroCampoMinado4x4,
+                        tempoAnterior,
+                        "tempovitoria4bombas.txt",
+                        "ultimojogo4x4.txt",
+                        nomeJogador
+                    )
 
                 elif opcao2 == "2":
                     listaPosicoesEscolhidas6x6 = []
                     tempoAnterior = 0
                     tabuleiroCampoMinado6x6 = criar_tabuleiro(6)
                     posicoesBombasSorteadas6x6 = posicoes_bombas(10, tabuleiroCampoMinado6x6)
-                    verificarPosicaoEscolhida(posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tabuleiroCampoMinado6x6, tempoAnterior, "tempovitoria6bombas.txt", "ultimojogo6x6.txt", nomeJogador)
+                    verificarPosicaoEscolhida(
+                        posicoesBombasSorteadas6x6,
+                        listaPosicoesEscolhidas6x6,
+                        tabuleiroCampoMinado6x6,
+                        tempoAnterior,
+                        "tempovitoria6bombas.txt",
+                        "ultimojogo6x6.txt",
+                        nomeJogador
+                    )
 
                 elif opcao2 == "3":
                     break
                 else:
-                    print("opcao Invalida!")
+                    print("Opção inválida!")
 
         elif opcao1 == "2":
             while True:
@@ -266,17 +282,53 @@ def campominado():
                 os.system("cls")
 
                 if opcao3 == "1":
-                    tabuleiroCampoMinado4x4, posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tempoAnterior = carregar_jogo("ultimojogo4x4.txt")
-                    verificarPosicaoEscolhida(posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tabuleiroCampoMinado4x4, tempoAnterior, "temposvitoria4bombas.txt", "ultimojogo4x4.txt", nomeJogador)
+                    try:
+                        tabuleiroCampoMinado4x4, posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tempoAnterior, _ = carregar_jogo("ultimojogo4x4.txt")
+
+                        if any("💣" in linha for linha in tabuleiroCampoMinado4x4):
+                            mostrar_tabuleiro(tabuleiroCampoMinado4x4)
+                            print("⚠️ Você perdeu na última jogada. Comece um novo jogo para continuar.")
+                            input("Pressione Enter para voltar ao menu...")
+                        else:
+                            verificarPosicaoEscolhida(
+                                posicoesBombasSorteadas4x4,
+                                listaPosicoesEscolhidas4x4,
+                                tabuleiroCampoMinado4x4,
+                                tempoAnterior,
+                                "tempovitoria4bombas.txt",
+                                "ultimojogo4x4.txt",
+                                nomeJogador
+                            )
+                    except FileNotFoundError:
+                        print("❌ Nenhum jogo salvo para recomeçar no nível Fácil.")
+                        input("Pressione Enter para continuar...")
 
                 elif opcao3 == "2":
-                    tabuleiroCampoMinado6x6, posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tempoAnterior = carregar_jogo("ultimojogo6x6.txt")
-                    verificarPosicaoEscolhida(posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tabuleiroCampoMinado6x6, tempoAnterior, "temposvitoria6bombas.txt", "ultimojogo6x6.txt", nomeJogador)
+                    try:
+                        tabuleiroCampoMinado6x6, posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tempoAnterior, _ = carregar_jogo("ultimojogo6x6.txt")
+
+                        if any("💣" in linha for linha in tabuleiroCampoMinado6x6):
+                            mostrar_tabuleiro(tabuleiroCampoMinado6x6)
+                            print("⚠️ Você perdeu na última jogada. Comece um novo jogo para continuar.")
+                            input("Pressione Enter para voltar ao menu...")
+                        else:
+                            verificarPosicaoEscolhida(
+                                posicoesBombasSorteadas6x6,
+                                listaPosicoesEscolhidas6x6,
+                                tabuleiroCampoMinado6x6,
+                                tempoAnterior,
+                                "tempovitoria6bombas.txt",
+                                "ultimojogo6x6.txt",
+                                nomeJogador
+                            )
+                    except FileNotFoundError:
+                        print("❌ Nenhum jogo salvo para recomeçar no nível Médio.")
+                        input("Pressione Enter para continuar...")
 
                 elif opcao3 == "3":
                     break
                 else:
-                    print("Opcao Invalida!")
+                    print("Opção inválida!")
 
         elif opcao1 == "3":
             while True:
@@ -284,19 +336,18 @@ def campominado():
                 os.system("cls")
 
                 if opcao4 == "1":
-                    cinco_melhores_tempos("temposvitoria4bombas.txt")
+                    cinco_melhores_tempos("tempovitoria4bombas.txt")
                 elif opcao4 == "2":
-                    cinco_melhores_tempos("temposvitoria6bombas.txt")
+                    cinco_melhores_tempos("tempovitoria6bombas.txt")
                 elif opcao4 == "3":
                     break
                 else:
-                    print("Opcao Invalida!")
+                    print("Opção inválida!")
 
         elif opcao1 == "4":
             break
         else:
-            print("Opcao Invalida!")
-
+            print("Opção inválida!")
 
 if __name__ == "__main__":
     campominado()
