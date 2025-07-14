@@ -74,7 +74,7 @@ def menu_estatisticas():
         elif opcao == "4":
             break
         else:
-            print("❌ Opção inválida.")
+             print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
 
 # Cria um tabuleiro com o número de linhas informado
@@ -122,7 +122,7 @@ def posicao_escolhida(tabuleiro_campo):
                 raise ValueError
             break
         except ValueError:
-            print(f"A posição da linha deve ser um número inteiro entre 1 e {len(tabuleiro_campo)}!")
+            print(f"\033[1;31m ❌ A posição da linha deve ser um número inteiro entre 1 e {len(tabuleiro_campo)}!\033[m")
 
     while True:
         try:
@@ -131,7 +131,7 @@ def posicao_escolhida(tabuleiro_campo):
                 raise ValueError
             break
         except ValueError:
-            print(f"A posição da coluna deve ser um número inteiro entre 1 e {len(tabuleiro_campo[0])}!")
+            print(f"\033[1;31m ❌ A posição da coluna deve ser um número inteiro entre 1 e {len(tabuleiro_campo[0])}!\033[m")
 
     return linha - 1, coluna - 1
 
@@ -181,7 +181,7 @@ def exibir_estatisticas_gerais():
     
 def exibir_historico_completo():
     if not os.path.exists("historico_partidas.txt"):
-        print("❌ Nenhuma partida registrada ainda.")
+        print("\033[1;31m ❌ Nenhuma partida registrada ainda. \033[m")
         return
 
     print("📜 Histórico Completo:")
@@ -223,7 +223,7 @@ def carregar_jogo(arquivo_salvo):
 # Lê o arquivo de tempos de vitória e exibe os 5 melhores tempos                      
 def cinco_melhores_tempos(arquivo_vitoria):
     if not os.path.exists(arquivo_vitoria):
-        print("❌ Não possui nenhum arquivo de vitórias registrado.")
+        print("\033[1;31m ❌ Não possui nenhum arquivo de vitórias registrado. \033[m")
         return
 
     melhores_tempos = []
@@ -239,7 +239,8 @@ def cinco_melhores_tempos(arquivo_vitoria):
                     pass
 
     if not melhores_tempos:
-        print(" ❌ Não possui nenhuma vitória registrada.")
+        print("\033[1;31m ❌ Não possui nenhuma vitória registrada. \033[m")
+
         return
 
     melhores_tempos.sort(key=lambda x: x[1])
@@ -282,7 +283,7 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
 
             if lista_posicao_escolhida in lista_posicoes_escolhidas:
                 limpar_tela()
-                print("Essa posição já foi preenchida!")
+                print("\033[1;31m❌ Essa posição já foi preenchida! Tente novamente.\033[m")
                 continue
             else:
                 limpar_tela()
@@ -360,7 +361,7 @@ def campominado():
     tempoAnterior = 0
 
     while True:
-        opcao1 = menu_principal()  # chama o menu separado
+        opcao1 = menu_principal() 
         limpar_tela()
 
         if opcao1 == "1":
@@ -425,7 +426,7 @@ def campominado():
                 elif opcao2 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
         elif opcao1 == "2":
             while True:
@@ -450,7 +451,7 @@ def campominado():
                                 nomeJogador
                             )
                     except FileNotFoundError:
-                        print("❌ Nenhum jogo salvo para recomeçar no nível Fácil.")
+                        print("\033[1;31m❌ Nenhum jogo salvo para recomeçar no nível Fácil.\033[m")
                         input("Pressione Enter para continuar...")
 
                 elif opcao3 == "2":
@@ -471,13 +472,13 @@ def campominado():
                                 nomeJogador
                             )
                     except FileNotFoundError:
-                        print("❌ Nenhum jogo salvo para recomeçar no nível Médio.")
+                        print("\033[1;31m❌ Nenhum jogo salvo para recomeçar no nível Médio.\033[m")
                         input("Pressione Enter para continuar...")
 
                 elif opcao3 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
         elif opcao1 == "3":
             while True:
@@ -491,7 +492,7 @@ def campominado():
                 elif opcao4 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
         elif opcao1 == "4":
             menu_estatisticas()
@@ -501,7 +502,7 @@ def campominado():
             break
 
         else:
-            print("Opção inválida! Tente novamente.")
+            print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
 
 
