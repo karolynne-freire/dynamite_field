@@ -4,18 +4,42 @@ import ast
 import os 
 import time
 
+def boas_vindas():
+    print("\033[1;34m" + "=" * 70 + "\033[m")
+    print("\033[1;31m")
+    print(r"""
+  ____   _    __  __ ____   ___    __  __ ___ _   _    _    ____   ___  
+ / ___| / \  |  \/  |  _ \ / _ \  |  \/  |_ _| \ | |  / \  |  _ \ / _ \ 
+| |    / _ \ | |\/| | |_) | | | | | |\/| || ||  \| | / _ \ | | | | | | |
+| |___/ ___ \| |  | |  __/| |_| | | |  | || || |\  |/ ___ \| |_| | |_| |
+ \____/_/   \_\_|  |_|_|   \___/  |_|  |_|___|_| \_/_/   \_\____/ \___/ 
+    """)
+    print("\033[m")
+    print("\033[1;34m               🎯 Bem-vindo nosso Campo Minado! 🎯\033[m")
+    print("\033[1;35m        Prepare-se para testar sua sorte e lógica...\033[m")
+    print("\033[1;35m         Desenvolvido por Karolynne, Ruth e Erwin 💡\033[m")
+    print("\033[1;34m" + "=" * 70 + "\033[m\n")
+
+    nomeJogador = input("\033[1;35mDigite seu nome para começar: \033[m").strip()
+    return nomeJogador
+
+
+
+
 # Exibe o menu principal e retorna a opção escolhida
 def menu_principal():
     print("=" * 30)
-    print("--- Jogo Campo Minado ---")
+    print("---  🚩  MENU INICIAL  🚩 ---")
     print("=" * 30)
     print("(1) Começar o jogo")
     print("(2) Recomeçar o último jogo")
     print("(3) Os cinco melhores tempos")
-    print("(4) Sair")
+    print("(4) Estatísticas e Histórico")
+    print("(5) Sair")
     
     opcao = input("Escolha uma das opções acima: ")
     return opcao
+
 
 # Exibe o menu de escolha do nível de dificuldade e retorna a opção escolhida
 def menu_dificuldade ():
@@ -322,12 +346,8 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
 # Função principal do jogo, possui a lógica do Campo Minado
 # Controla o fluxo de menus e chamadas de funções com base nas escolhas do jogador
 def campominado():
-    print("=" * 40)
-    print("-----PROJETO DE LÓGICA PROGRAMÁVEL----")
-    print("-----Karolynne, Ruth e Erwin-----")
-    print("=" * 40)
-
-    nomeJogador = input("Digite seu nome: ").strip()
+    nomeJogador = boas_vindas()
+    limpar_tela()
 
     tabuleiroCampoMinado4x4 = []
     posicoesBombasSorteadas4x4 = []
@@ -340,15 +360,7 @@ def campominado():
     tempoAnterior = 0
 
     while True:
-        print("=" * 30)
-        print("--- Jogo Campo Minado ---")
-        print("=" * 30)
-        print("(1) Começar o jogo")
-        print("(2) Recomeçar o último jogo")
-        print("(3) Os cinco melhores tempos")
-        print("(4) Estatísticas e Histórico")
-        print("(5) Sair")
-        opcao1 = input("Escolha uma das opções acima: ")
+        opcao1 = menu_principal()  # chama o menu separado
         limpar_tela()
 
         if opcao1 == "1":
@@ -485,9 +497,11 @@ def campominado():
             menu_estatisticas()
 
         elif opcao1 == "5":
+            print("Obrigado por jogar! Até a próxima!")
             break
+
         else:
-            print("Opção inválida!")
+            print("Opção inválida! Tente novamente.")
 
 
 
