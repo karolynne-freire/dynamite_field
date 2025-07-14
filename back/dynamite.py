@@ -97,8 +97,20 @@ def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_ant
         arquivo.write(f"Posições Escolhidas = {posicoes_escolhidas}\n")
         arquivo.write(f"Tempo de Jogo = {tempo_anterior}\n")
         arquivo.write(f"Finalizado = {finalizado}\n")
+        
+        
+def registrar_partida_historico(nome_jogador, nivel, tempo, resultado):
+    linha = f"{nome_jogador} | Nível: {nivel} | Tempo: {round(tempo, 2)}s | Resultado: {resultado}\n"
+    
+    with open("historico_partidas.txt", "a", encoding="utf-8") as historico:
+        historico.write(linha)
 
-
+    if resultado == "Vitória":
+        with open("vitorias.txt", "a", encoding="utf-8") as vit:
+            vit.write(linha)
+    elif resultado == "Derrota":
+        with open("derrotas.txt", "a", encoding="utf-8") as der:
+            der.write(linha)
 
 
 # Carrega o jogo salvo, convertendo as strings de volta para listas/valores originais
@@ -181,6 +193,7 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
     print("Aperte CTRL+C, a qualquer momento, para encerrar o jogo!")
     lista_posicoes_escolhidas = posicoes_escolhidas
     tempo_inicial = time.time()
+    nivel = f"{len(tabuleiro_campo_minado)}x{len(tabuleiro_campo_minado)}"
 
     while True:
         try:
@@ -207,9 +220,13 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
                 print("⚠️ Você perdeu! Cuidado na próxima vez!")
                 print("=" * 30)
 
+                tempo_final = time.time()
+                tempo_total = (tempo_final - tempo_inicial) + tempo_anterior
+                registrar_partida_historico(nome_jogador, nivel, tempo_total, "Derrota")
+
                 salvar = input("Deseja salvar esta partida? (s/n): ").strip().lower()
                 if salvar == "s":
-                    salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_anterior, arquivo_jogo_salvo, nome_jogador, finalizado=True)
+                    salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_total, arquivo_jogo_salvo, nome_jogador, finalizado=True)
                 break
 
             # Conta bombas ao redor
@@ -230,18 +247,21 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
                 print(f"{round(tempo_vitoria, 2)} segundos")
                 print(" 🎉 Parabéns, você ganhou o jogo! 🎉")
                 print("=" * 40)
+
                 with open(arquivo_tempos_vitoria, "a", encoding="utf-8") as tempos:
                     tempos.write(f"{nome_jogador}:{round(tempo_vitoria, 2)},")
+
+                registrar_partida_historico(nome_jogador, nivel, tempo_vitoria, "Vitória")
                 salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_vitoria, arquivo_jogo_salvo, nome_jogador, finalizado=True)
                 break
 
-        # Salva o jogo se o jogador sair ou pressionar Ctrl+C
         except KeyboardInterrupt:
             tempo_final = time.time()
             tempo_anterior = (tempo_final - tempo_inicial) + tempo_anterior
             print("\n⏸️ Jogo interrompido. Salvando progresso...")
             salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_anterior, arquivo_jogo_salvo, nome_jogador, finalizado=False)
             break
+
 
 
 
