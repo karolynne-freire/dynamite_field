@@ -28,6 +28,7 @@ def boas_vindas():
 
 # Exibe o menu principal e retorna a opção escolhida
 def menu_principal():
+    limpar_tela()
     print("=" * 30)
     print("---  🚩  MENU INICIAL  🚩 ---")
     print("=" * 30)
@@ -75,7 +76,6 @@ def menu_estatisticas():
             break
         else:
              print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
-
 
 # Cria um tabuleiro com o número de linhas informado
 def criar_tabuleiro(quant_linhas):
@@ -161,6 +161,7 @@ def registrar_partida_historico(nome_jogador, nivel, tempo, resultado):
             der.write(linha)
 
 def exibir_estatisticas_gerais():
+    limpar_tela()
     total_vitorias = 0
     total_derrotas = 0
 
@@ -180,6 +181,7 @@ def exibir_estatisticas_gerais():
     print(f"💣 Derrotas: {total_derrotas}")
     
 def exibir_historico_completo():
+    limpar_tela()
     if not os.path.exists("historico_partidas.txt"):
         print("\033[1;31m ❌ Nenhuma partida registrada ainda. \033[m")
         return
@@ -222,6 +224,7 @@ def carregar_jogo(arquivo_salvo):
 
 # Lê o arquivo de tempos de vitória e exibe os 5 melhores tempos                      
 def cinco_melhores_tempos(arquivo_vitoria):
+    limpar_tela()
     if not os.path.exists(arquivo_vitoria):
         print("\033[1;31m ❌ Não possui nenhum arquivo de vitórias registrado. \033[m")
         return
