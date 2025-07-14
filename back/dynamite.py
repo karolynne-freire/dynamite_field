@@ -29,6 +29,30 @@ def menu_dificuldade ():
     opcao = input("Escolha uma das opções acima: ")
     return opcao
 
+def menu_estatisticas():
+    while True:
+        print("=" * 30)
+        print("📊 Menu de Estatísticas")
+        print("=" * 30)
+        print("(1) Ver Top 5 Melhores Vitórias")
+        print("(2) Ver Últimas Partidas (Histórico Completo)")
+        print("(3) Ver Estatísticas Gerais")
+        print("(4) Voltar")
+        opcao = input("Escolha uma das opções acima: ")
+
+        if opcao == "1":
+            cinco_melhores_tempos("tempovitoria4bombas.txt")
+            cinco_melhores_tempos("tempovitoria6bombas.txt")
+        elif opcao == "2":
+            exibir_historico_completo()
+        elif opcao == "3":
+            exibir_estatisticas_gerais()
+        elif opcao == "4":
+            break
+        else:
+            print("❌ Opção inválida.")
+
+
 # Cria um tabuleiro com o número de linhas informado
 def criar_tabuleiro(quant_linhas):
     tabuleiro_campo = []
@@ -111,6 +135,36 @@ def registrar_partida_historico(nome_jogador, nivel, tempo, resultado):
     elif resultado == "Derrota":
         with open("derrotas.txt", "a", encoding="utf-8") as der:
             der.write(linha)
+
+def exibir_estatisticas_gerais():
+    total_vitorias = 0
+    total_derrotas = 0
+
+    if os.path.exists("vitorias.txt"):
+        with open("vitorias.txt", "r", encoding="utf-8") as v:
+            total_vitorias = len(v.readlines())
+
+    if os.path.exists("derrotas.txt"):
+        with open("derrotas.txt", "r", encoding="utf-8") as d:
+            total_derrotas = len(d.readlines())
+
+    total_partidas = total_vitorias + total_derrotas
+
+    print("📈 Estatísticas Gerais:")
+    print(f"🎮 Total de partidas: {total_partidas}")
+    print(f"🏆 Vitórias: {total_vitorias}")
+    print(f"💣 Derrotas: {total_derrotas}")
+    
+def exibir_historico_completo():
+    if not os.path.exists("historico_partidas.txt"):
+        print("❌ Nenhuma partida registrada ainda.")
+        return
+
+    print("📜 Histórico Completo:")
+    with open("historico_partidas.txt", "r", encoding="utf-8") as hist:
+        linhas = hist.readlines()
+        for linha in linhas:
+            print(f"🔹 {linha.strip()}")
 
 
 # Carrega o jogo salvo, convertendo as strings de volta para listas/valores originais
@@ -286,7 +340,15 @@ def campominado():
     tempoAnterior = 0
 
     while True:
-        opcao1 = menu_principal()
+        print("=" * 30)
+        print("--- Jogo Campo Minado ---")
+        print("=" * 30)
+        print("(1) Começar o jogo")
+        print("(2) Recomeçar o último jogo")
+        print("(3) Os cinco melhores tempos")
+        print("(4) Estatísticas e Histórico")
+        print("(5) Sair")
+        opcao1 = input("Escolha uma das opções acima: ")
         limpar_tela()
 
         if opcao1 == "1":
@@ -420,9 +482,13 @@ def campominado():
                     print("Opção inválida!")
 
         elif opcao1 == "4":
+            menu_estatisticas()
+
+        elif opcao1 == "5":
             break
         else:
             print("Opção inválida!")
+
 
 
 # Inicia o jogo se o arquivo for executado
