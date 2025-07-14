@@ -4,30 +4,78 @@ import ast
 import os 
 import time
 
+def boas_vindas():
+    print("\033[1;34m" + "=" * 70 + "\033[m")
+    print("\033[1;31m")
+    print(r"""
+  ____   _    __  __ ____   ___    __  __ ___ _   _    _    ____   ___  
+ / ___| / \  |  \/  |  _ \ / _ \  |  \/  |_ _| \ | |  / \  |  _ \ / _ \ 
+| |    / _ \ | |\/| | |_) | | | | | |\/| || ||  \| | / _ \ | | | | | | |
+| |___/ ___ \| |  | |  __/| |_| | | |  | || || |\  |/ ___ \| |_| | |_| |
+ \____/_/   \_\_|  |_|_|   \___/  |_|  |_|___|_| \_/_/   \_\____/ \___/ 
+    """)
+    print("\033[m")
+    print("\033[1;34m               🎯 Bem-vindo nosso Campo Minado! 🎯\033[m")
+    print("\033[1;35m        Prepare-se para testar sua sorte e lógica...\033[m")
+    print("\033[1;35m         Desenvolvido por Karolynne, Ruth e Erwin 💡\033[m")
+    print("\033[1;34m" + "=" * 70 + "\033[m\n")
+
+    nomeJogador = input("\033[1;35mDigite seu nome para começar: \033[m").strip()
+    return nomeJogador
+
+
+
+
 # Exibe o menu principal e retorna a opção escolhida
 def menu_principal():
+    limpar_tela()
     print("=" * 30)
-    print("--- Jogo Campo Minado ---")
+    print("---  🚩  MENU INICIAL  🚩 ---")
     print("=" * 30)
     print("(1) Começar o jogo")
     print("(2) Recomeçar o último jogo")
     print("(3) Os cinco melhores tempos")
-    print("(4) Sair")
+    print("(4) Estatísticas e Histórico")
+    print("(5) Sair")
     
     opcao = input("Escolha uma das opções acima: ")
     return opcao
 
+
 # Exibe o menu de escolha do nível de dificuldade e retorna a opção escolhida
 def menu_dificuldade ():
-    print("=" * 30)
-    print("       Nível de Dificuldade")
-    print("=" * 30)
+    # print("=" * 30)
+    # print("       Nível de Dificuldade")
+    # print("=" * 30)
     print("\n(1) Fácil")
     print("(2) Médio")
     print("(3) Voltar")
    
     opcao = input("Escolha uma das opções acima: ")
     return opcao
+
+def menu_estatisticas():
+    while True:
+        print("=" * 30)
+        print("📊 Menu de Estatísticas")
+        print("=" * 30)
+        print("(1) Ver Top 5 Melhores Vitórias")
+        print("(2) Ver Últimas Partidas (Histórico Completo)")
+        print("(3) Ver Estatísticas Gerais")
+        print("(4) Voltar")
+        opcao = input("Escolha uma das opções acima: ")
+
+        if opcao == "1":
+            cinco_melhores_tempos("tempovitoria4bombas.txt")
+            cinco_melhores_tempos("tempovitoria6bombas.txt")
+        elif opcao == "2":
+            exibir_historico_completo()
+        elif opcao == "3":
+            exibir_estatisticas_gerais()
+        elif opcao == "4":
+            break
+        else:
+             print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
 # Cria um tabuleiro com o número de linhas informado
 def criar_tabuleiro(quant_linhas):
@@ -74,7 +122,7 @@ def posicao_escolhida(tabuleiro_campo):
                 raise ValueError
             break
         except ValueError:
-            print(f"A posição da linha deve ser um número inteiro entre 1 e {len(tabuleiro_campo)}!")
+            print(f"\033[1;31m ❌ A posição da linha deve ser um número inteiro entre 1 e {len(tabuleiro_campo)}!\033[m")
 
     while True:
         try:
@@ -83,20 +131,66 @@ def posicao_escolhida(tabuleiro_campo):
                 raise ValueError
             break
         except ValueError:
-            print(f"A posição da coluna deve ser um número inteiro entre 1 e {len(tabuleiro_campo[0])}!")
+            print(f"\033[1;31m ❌ A posição da coluna deve ser um número inteiro entre 1 e {len(tabuleiro_campo[0])}!\033[m")
 
     return linha - 1, coluna - 1
 
 
 # Salva o estado atual do jogo em um arquivo de texto
-def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_anterior, arquivo_jogo, nome_jogador):
- with open(arquivo_jogo, "w", encoding="utf-8") as arquivo:
-    arquivo.write(f"Jogador = {nome_jogador}\n")
-    arquivo.write(f"Tabuleiro = {tabuleiro_campo}\n")
-    arquivo.write(f"Bombas = {posicoes_bombas}\n")
-    arquivo.write(f"Posições Escolhidas = {posicoes_escolhidas}\n")
-    arquivo.write(f"Tempo de Jogo = {tempo_anterior}\n")
+def salvar_jogo(tabuleiro_campo, posicoes_bombas, posicoes_escolhidas, tempo_anterior, arquivo_jogo, nome_jogador, finalizado=False):
+    with open(arquivo_jogo, "w", encoding="utf-8") as arquivo:
+        arquivo.write(f"Jogador = {nome_jogador}\n")
+        arquivo.write(f"Tabuleiro = {tabuleiro_campo}\n")
+        arquivo.write(f"Bombas = {posicoes_bombas}\n")
+        arquivo.write(f"Posições Escolhidas = {posicoes_escolhidas}\n")
+        arquivo.write(f"Tempo de Jogo = {tempo_anterior}\n")
+        arquivo.write(f"Finalizado = {finalizado}\n")
+        
+        
+def registrar_partida_historico(nome_jogador, nivel, tempo, resultado):
+    linha = f"{nome_jogador} | Nível: {nivel} | Tempo: {round(tempo, 2)}s | Resultado: {resultado}\n"
+    
+    with open("historico_partidas.txt", "a", encoding="utf-8") as historico:
+        historico.write(linha)
 
+    if resultado == "Vitória":
+        with open("vitorias.txt", "a", encoding="utf-8") as vit:
+            vit.write(linha)
+    elif resultado == "Derrota":
+        with open("derrotas.txt", "a", encoding="utf-8") as der:
+            der.write(linha)
+
+def exibir_estatisticas_gerais():
+    limpar_tela()
+    total_vitorias = 0
+    total_derrotas = 0
+
+    if os.path.exists("vitorias.txt"):
+        with open("vitorias.txt", "r", encoding="utf-8") as v:
+            total_vitorias = len(v.readlines())
+
+    if os.path.exists("derrotas.txt"):
+        with open("derrotas.txt", "r", encoding="utf-8") as d:
+            total_derrotas = len(d.readlines())
+
+    total_partidas = total_vitorias + total_derrotas
+
+    print("📈 Estatísticas Gerais:")
+    print(f"🎮 Total de partidas: {total_partidas}")
+    print(f"🏆 Vitórias: {total_vitorias}")
+    print(f"💣 Derrotas: {total_derrotas}")
+    
+def exibir_historico_completo():
+    limpar_tela()
+    if not os.path.exists("historico_partidas.txt"):
+        print("\033[1;31m ❌ Nenhuma partida registrada ainda. \033[m")
+        return
+
+    print("📜 Histórico Completo:")
+    with open("historico_partidas.txt", "r", encoding="utf-8") as hist:
+        linhas = hist.readlines()
+        for linha in linhas:
+            print(f"🔹 {linha.strip()}")
 
 
 # Carrega o jogo salvo, convertendo as strings de volta para listas/valores originais
@@ -106,6 +200,7 @@ def carregar_jogo(arquivo_salvo):
     posicoes = []
     tempo = 0
     nome_jogador = ""
+    finalizado = False
 
     with open(arquivo_salvo, "r", encoding="utf-8") as arquivo:
         for linha in arquivo:
@@ -120,14 +215,18 @@ def carregar_jogo(arquivo_salvo):
                 posicoes = ast.literal_eval(valor)
             elif chave == "Tempo de Jogo":
                 tempo = float(valor)
+            elif chave == "Finalizado":
+                finalizado = valor.lower() == "true"
 
-    return tabuleiro, bombas, posicoes, tempo, nome_jogador
+    return tabuleiro, bombas, posicoes, tempo, nome_jogador, finalizado
+
 
 
 # Lê o arquivo de tempos de vitória e exibe os 5 melhores tempos                      
 def cinco_melhores_tempos(arquivo_vitoria):
+    limpar_tela()
     if not os.path.exists(arquivo_vitoria):
-        print("❌ Não possui nenhum arquivo de vitórias registrado.")
+        print("\033[1;31m ❌ Não possui nenhum arquivo de vitórias registrado. \033[m")
         return
 
     melhores_tempos = []
@@ -143,7 +242,8 @@ def cinco_melhores_tempos(arquivo_vitoria):
                     pass
 
     if not melhores_tempos:
-        print(" ❌ Não possui nenhuma vitória registrada.")
+        print("\033[1;31m ❌ Não possui nenhuma vitória registrada. \033[m")
+
         return
 
     melhores_tempos.sort(key=lambda x: x[1])
@@ -175,6 +275,7 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
     print("Aperte CTRL+C, a qualquer momento, para encerrar o jogo!")
     lista_posicoes_escolhidas = posicoes_escolhidas
     tempo_inicial = time.time()
+    nivel = f"{len(tabuleiro_campo_minado)}x{len(tabuleiro_campo_minado)}"
 
     while True:
         try:
@@ -185,7 +286,7 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
 
             if lista_posicao_escolhida in lista_posicoes_escolhidas:
                 limpar_tela()
-                print("Essa posição já foi preenchida!")
+                print("\033[1;31m❌ Essa posição já foi preenchida! Tente novamente.\033[m")
                 continue
             else:
                 limpar_tela()
@@ -201,11 +302,16 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
                 print("⚠️ Você perdeu! Cuidado na próxima vez!")
                 print("=" * 30)
 
+                tempo_final = time.time()
+                tempo_total = (tempo_final - tempo_inicial) + tempo_anterior
+                registrar_partida_historico(nome_jogador, nivel, tempo_total, "Derrota")
+
                 salvar = input("Deseja salvar esta partida? (s/n): ").strip().lower()
                 if salvar == "s":
-                    salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_anterior, arquivo_jogo_salvo, nome_jogador)
+                    salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_total, arquivo_jogo_salvo, nome_jogador, finalizado=True)
                 break
 
+            # Conta bombas ao redor
             for bomba in posicoes_bombas:
                 if abs(bomba[0] - linha) <= 1 and abs(bomba[1] - coluna) <= 1:
                     if bomba != [linha, coluna]:
@@ -223,28 +329,29 @@ def verificarPosicaoEscolhida(posicoes_bombas, posicoes_escolhidas, tabuleiro_ca
                 print(f"{round(tempo_vitoria, 2)} segundos")
                 print(" 🎉 Parabéns, você ganhou o jogo! 🎉")
                 print("=" * 40)
+
                 with open(arquivo_tempos_vitoria, "a", encoding="utf-8") as tempos:
                     tempos.write(f"{nome_jogador}:{round(tempo_vitoria, 2)},")
+
+                registrar_partida_historico(nome_jogador, nivel, tempo_vitoria, "Vitória")
+                salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_vitoria, arquivo_jogo_salvo, nome_jogador, finalizado=True)
                 break
 
-        # Salva o jogo se o jogador sair ou pressionar Ctrl+C
         except KeyboardInterrupt:
             tempo_final = time.time()
             tempo_anterior = (tempo_final - tempo_inicial) + tempo_anterior
-            salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_anterior, arquivo_jogo_salvo, nome_jogador)
+            print("\n⏸️ Jogo interrompido. Salvando progresso...")
+            salvar_jogo(tabuleiro_campo_minado, posicoes_bombas, lista_posicoes_escolhidas, tempo_anterior, arquivo_jogo_salvo, nome_jogador, finalizado=False)
             break
+
 
 
 
 # Função principal do jogo, possui a lógica do Campo Minado
 # Controla o fluxo de menus e chamadas de funções com base nas escolhas do jogador
 def campominado():
-    print("=" * 40)
-    print("-----PROJETO DE LÓGICA PROGRAMÁVEL----")
-    print("-----Karolynne, Ruth e Erwin-----")
-    print("=" * 40)
-
-    nomeJogador = input("Digite seu nome: ").strip()
+    nomeJogador = boas_vindas()
+    limpar_tela()
 
     tabuleiroCampoMinado4x4 = []
     posicoesBombasSorteadas4x4 = []
@@ -257,7 +364,7 @@ def campominado():
     tempoAnterior = 0
 
     while True:
-        opcao1 = menu_principal()
+        opcao1 = menu_principal() 
         limpar_tela()
 
         if opcao1 == "1":
@@ -266,6 +373,18 @@ def campominado():
                 limpar_tela()
 
                 if opcao2 == "1":
+                    # Nível Fácil
+                    if os.path.exists("ultimojogo4x4.txt"):
+                        try:
+                            _, _, _, _, _, finalizado = carregar_jogo("ultimojogo4x4.txt")
+                            if finalizado:
+                                print("⚠️ Você finalizou a última partida deste nível.")
+                                resp = input("Deseja começar um novo jogo? (s/n): ").strip().lower()
+                                if resp != "s":
+                                    continue
+                        except Exception:
+                            pass
+
                     listaPosicoesEscolhidas4x4 = []
                     tempoAnterior = 0
                     tabuleiroCampoMinado4x4 = criar_tabuleiro(4)
@@ -281,6 +400,18 @@ def campominado():
                     )
 
                 elif opcao2 == "2":
+                    # Nível Médio
+                    if os.path.exists("ultimojogo6x6.txt"):
+                        try:
+                            _, _, _, _, _, finalizado = carregar_jogo("ultimojogo6x6.txt")
+                            if finalizado:
+                                print("⚠️ Você finalizou a última partida deste nível.")
+                                resp = input("Deseja começar um novo jogo? (s/n): ").strip().lower()
+                                if resp != "s":
+                                    continue
+                        except Exception:
+                            pass
+
                     listaPosicoesEscolhidas6x6 = []
                     tempoAnterior = 0
                     tabuleiroCampoMinado6x6 = criar_tabuleiro(6)
@@ -298,7 +429,7 @@ def campominado():
                 elif opcao2 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
         elif opcao1 == "2":
             while True:
@@ -307,11 +438,10 @@ def campominado():
 
                 if opcao3 == "1":
                     try:
-                        tabuleiroCampoMinado4x4, posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tempoAnterior, _ = carregar_jogo("ultimojogo4x4.txt")
-
-                        if any("💣" in linha for linha in tabuleiroCampoMinado4x4):
+                        tabuleiroCampoMinado4x4, posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tempoAnterior, _, finalizado = carregar_jogo("ultimojogo4x4.txt")
+                        if finalizado:
                             mostrar_tabuleiro(tabuleiroCampoMinado4x4)
-                            print("⚠️ Você perdeu na última jogada. Comece um novo jogo para continuar.")
+                            print("⚠️ O último jogo já foi finalizado. Comece um novo jogo para jogar novamente.")
                             input("Pressione Enter para voltar ao menu...")
                         else:
                             verificarPosicaoEscolhida(
@@ -324,16 +454,15 @@ def campominado():
                                 nomeJogador
                             )
                     except FileNotFoundError:
-                        print("❌ Nenhum jogo salvo para recomeçar no nível Fácil.")
+                        print("\033[1;31m❌ Nenhum jogo salvo para recomeçar no nível Fácil.\033[m")
                         input("Pressione Enter para continuar...")
 
                 elif opcao3 == "2":
                     try:
-                        tabuleiroCampoMinado6x6, posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tempoAnterior, _ = carregar_jogo("ultimojogo6x6.txt")
-
-                        if any("💣" in linha for linha in tabuleiroCampoMinado6x6):
+                        tabuleiroCampoMinado6x6, posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tempoAnterior, _, finalizado = carregar_jogo("ultimojogo6x6.txt")
+                        if finalizado:
                             mostrar_tabuleiro(tabuleiroCampoMinado6x6)
-                            print("⚠️ Você perdeu na última jogada. Comece um novo jogo para continuar.")
+                            print("⚠️ O último jogo já foi finalizado. Comece um novo jogo para jogar novamente.")
                             input("Pressione Enter para voltar ao menu...")
                         else:
                             verificarPosicaoEscolhida(
@@ -346,13 +475,13 @@ def campominado():
                                 nomeJogador
                             )
                     except FileNotFoundError:
-                        print("❌ Nenhum jogo salvo para recomeçar no nível Médio.")
+                        print("\033[1;31m❌ Nenhum jogo salvo para recomeçar no nível Médio.\033[m")
                         input("Pressione Enter para continuar...")
 
                 elif opcao3 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
         elif opcao1 == "3":
             while True:
@@ -366,12 +495,19 @@ def campominado():
                 elif opcao4 == "3":
                     break
                 else:
-                    print("Opção inválida!")
+                    print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
 
         elif opcao1 == "4":
+            menu_estatisticas()
+
+        elif opcao1 == "5":
+            print("Obrigado por jogar! Até a próxima!")
             break
+
         else:
-            print("Opção inválida!")
+            print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
+
+
 
 # Inicia o jogo se o arquivo for executado
 if __name__ == "__main__":
