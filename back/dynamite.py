@@ -29,41 +29,46 @@ def boas_vindas():
 # Exibe o menu principal e retorna a opção escolhida
 def menu_principal():
     limpar_tela()
-    print("=" * 30)
-    print("---  🚩  MENU INICIAL  🚩 ---")
-    print("=" * 30)
-    print("(1) Começar o jogo")
-    print("(2) Recomeçar o último jogo")
-    print("(3) Os cinco melhores tempos")
-    print("(4) Estatísticas e Histórico")
-    print("(5) Sair")
+    print("\033[1;34m" + "=" * 40)
+    print("        🚩 MENU PRINCIPAL 🚩")
+    print("=" * 40 + "\033[m")
     
-    opcao = input("Escolha uma das opções acima: ")
+    print("\033[1;32m(1)\033[m 🎮 Começar o jogo")
+    print("\033[1;33m(2)\033[m 🔁 Recomeçar o último jogo")
+    print("\033[1;36m(3)\033[m ⏱️ Os cinco melhores tempos")
+    print("\033[1;35m(4)\033[m 📊 Estatísticas e Histórico")
+    print("\033[1;31m(5)\033[m ❌ Sair")
+    
+    opcao = input("\n\033[1;36mEscolha uma das opções acima: \033[m")
     return opcao
 
 
 # Exibe o menu de escolha do nível de dificuldade e retorna a opção escolhida
-def menu_dificuldade ():
-    # print("=" * 30)
-    # print("       Nível de Dificuldade")
-    # print("=" * 30)
-    print("\n(1) Fácil")
-    print("(2) Médio")
-    print("(3) Voltar")
-   
-    opcao = input("Escolha uma das opções acima: ")
+def menu_dificuldade():
+    print("\033[1;34m" + "=" * 40)
+    print("       🌟 Selecione a Dificuldade 🌟")
+    print("=" * 40 + "\033[m")
+    
+    print("\033[1;32m(1)\033[m 😄 Fácil")
+    print("\033[1;33m(2)\033[m 😬 Médio")
+    print("\033[1;31m(3)\033[m 🔙 Voltar")
+    
+    opcao = input("\n\033[1;36mEscolha uma das opções acima: \033[m")
     return opcao
+
 
 def menu_estatisticas():
     while True:
-        print("=" * 30)
-        print("📊 Menu de Estatísticas")
-        print("=" * 30)
-        print("(1) Ver Top 5 Melhores Vitórias")
-        print("(2) Ver Últimas Partidas (Histórico Completo)")
-        print("(3) Ver Estatísticas Gerais")
-        print("(4) Voltar")
-        opcao = input("Escolha uma das opções acima: ")
+        print("\033[1;34m" + "=" * 40)
+        print("       📊 MENU DE ESTATÍSTICAS")
+        print("=" * 40 + "\033[m")
+        
+        print("\033[1;33m(1)\033[m 🏆 Ver Top 5 Melhores Vitórias")
+        print("\033[1;36m(2)\033[m 📜 Ver Histórico Completo")
+        print("\033[1;35m(3)\033[m 📈 Ver Estatísticas Gerais")
+        print("\033[1;31m(4)\033[m 🔙 Voltar")
+        
+        opcao = input("\n\033[1;36mEscolha uma das opções acima: \033[m")
 
         if opcao == "1":
             cinco_melhores_tempos("tempovitoria4bombas.txt")
@@ -75,7 +80,8 @@ def menu_estatisticas():
         elif opcao == "4":
             break
         else:
-             print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m")
+            print("\033[1;31m❌ Opção inválida! Tente novamente.\033[m\n")
+
 
 # Cria um tabuleiro com o número de linhas informado
 def criar_tabuleiro(quant_linhas):
@@ -90,16 +96,17 @@ def criar_tabuleiro(quant_linhas):
 # Exibe o tabuleiro na tela, formatado com índices de linha e coluna
 def mostrar_tabuleiro(tabuleiro_campo):
     print("\t", end="")
-
+    
     for coluna in range(1, len(tabuleiro_campo[0]) + 1):
-        print(coluna, end="\t")
+        print(f"{coluna}", end="\t")
     print()
 
     for linha_idx, linha in enumerate(tabuleiro_campo):
-        print(linha_idx + 1, end="\t")
+        print(f"{linha_idx + 1}", end="\t")
         for elemento in linha:
-            print(elemento, end="\t")
+            print(f"\033[1;35m{elemento}\033[m", end="\t")  
         print()
+
 
 # Gera posições aleatórias para as bombas
 def posicoes_bombas(quant_bombas, tabuleiro_campo):
