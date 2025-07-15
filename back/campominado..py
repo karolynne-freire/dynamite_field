@@ -1,100 +1,88 @@
-
-
+import os
 #função principal que recebeos demis funçoes para executar
+def campo_minado():
+    print("----- Projeto de Lógica Programacional -----")
+    print("----- Karolynne, Ruth e Erwin -----")
+    print("----- Campo Minado -----")
 
-def campominado():
-    print("-----projeto de lógica programacional----")
-    print("-----Karolynne, Ruth e Erwin-----")
-    print("-----campo minado-----")
-    tabuleiroCampoMinado4x4=[]
-    posicoesBombasSorteadas4x4=[]
-    listaPosicoesEscolhidas4x4=[]
+    # Inicialização dos dados para 4x4 e 6x6
+    tabuleiro_4x4 = []
+    bombas_4x4 = []
+    escolhas_4x4 = []
 
-    tabuleiroCampoMinado6x6=[]
-    posicoesBombasSorteadas6x6=[]
-    listaPosicoesEscolhidas6x6=[]
+    tabuleiro_6x6 = []
+    bombas_6x6 = []
+    escolhas_6x6 = []
 
-    tempoAnterior = 0
+    tempo_anterior = 0
 
     while True:
-        opcao1 = menuCampoMinado()
+        opcao_menu = menu_campo_minado()
         os.system("cls")
 
-        if opcao1 == "1":
+        if opcao_menu == "1":  # Novo Jogo
             while True:
-                opcao2 = menuDificuldade()
+                dificuldade = menu_dificuldade()
                 os.system("cls")
 
-                if opcao2 == "1":
-                    listaPosicoesEscolhidas4x4=[]
-                    tempoAnterior = 0
-                    tabuleiroCampoMinado4x4 = criarTabuleiro(4)
-                    posicoesBombasSorteadas4x4 = (posicoesBombasSorteadas(6,tabuleiroCampoMinado4x4))
-                    verificarPosicaoEscolhida(posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tabuleiroCampoMinado4x4, tempoAnterior, "tempovitoria4bombas.txt", "ultimojogo4x4.txt")
+                if dificuldade == "1":
+                    escolhas_4x4 = []
+                    tempo_anterior = 0
+                    tabuleiro_4x4 = criar_tabuleiro(4)
+                    bombas_4x4 = posicoes_bombas_sorteadas(6, tabuleiro_4x4)
+                    verificar_posicao_escolhida(bombas_4x4, escolhas_4x4, tabuleiro_4x4, tempo_anterior, "tempovitoria4bombas.txt", "ultimojogo4x4.txt")
 
-                elif opcao2 == "2":
-                    listaPosicoesEscolhidas6x6=[]
-                    tempoAnterior = 0
-                    tabuleiroCampoMinado6x6 = criarTabuleiro(6)
-                    posicoesBombasSorteadas6x6 = (posicoesBombasSorteadas(10,tabuleiroCampoMinado6x6))
-                    verificarPosicaoEscolhida(posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tabuleiroCampoMinado6x6, tempoAnterior, "tempovitoria6bombas.txt", "ultimojogo6x6.txt")
+                elif dificuldade == "2":
+                    escolhas_6x6 = []
+                    tempo_anterior = 0
+                    tabuleiro_6x6 = criar_tabuleiro(6)
+                    bombas_6x6 = posicoes_bombas_sorteadas(10, tabuleiro_6x6)
+                    verificar_posicao_escolhida(bombas_6x6, escolhas_6x6, tabuleiro_6x6, tempo_anterior, "tempovitoria6bombas.txt", "ultimojogo6x6.txt")
 
-                elif opcao2 == "3":
+                elif dificuldade == "3":
                     break
                 else:
-                    print("opcao Invalida!")
-        elif opcao1 == "2":
+                    print("Opção inválida!")
+
+        elif opcao_menu == "2":  # Continuar jogo
             while True:
-                opcao3 = menuDificuldade()
+                dificuldade = menu_dificuldade()
                 os.system("cls")
 
-                if opcao3 == "1":
-                    tabuleiroCampoMimado4x4,posicoesBombasSorteadas4x4, listaPosicoesEscolhidas4x4, tempoAnterior = tabuleiroSalvo("ultimojogo4x4.txt")
-                    verificarPosicaoEscolhida(posicoesBombasSorteadas4x4, listaposicoesEscolhidas4x4, tabuleiroCampoMinado4x4, tempoAnterior, "temposvitoria4bombas.txt", "ultimojogo4x4.txt")
+                if dificuldade == "1":
+                    tabuleiro_4x4, bombas_4x4, escolhas_4x4, tempo_anterior = tabuleiro_salvo("ultimojogo4x4.txt")
+                    verificar_posicao_escolhida(bombas_4x4, escolhas_4x4, tabuleiro_4x4, tempo_anterior, "tempovitoria4bombas.txt", "ultimojogo4x4.txt")
 
-                elif opcao3 == "2":
-                    tabuleiroCampoMimado6x6,posicoesBombasSorteadas6x6, listaPosicoesEscolhidas6x6, tempoAnterior = tabuleiroSalvo("ultimojogo6x6.txt")
-                    verificarPosicaoEscolhida(posicoesBombasSorteadas6x6, listaposicoesEscolhidas6x6, tabuleiroCampoMinado6x6, tempoAnterior, "temposvitoria6bombas.txt", "ultimojogo6x6.txt")
+                elif dificuldade == "2":
+                    tabuleiro_6x6, bombas_6x6, escolhas_6x6, tempo_anterior = tabuleiro_salvo("ultimojogo6x6.txt")
+                    verificar_posicao_escolhida(bombas_6x6, escolhas_6x6, tabuleiro_6x6, tempo_anterior, "tempovitoria6bombas.txt", "ultimojogo6x6.txt")
 
-                elif opcao3 =="3":
+                elif dificuldade == "3":
                     break
-
                 else:
-                    print("Opcao Invalida!")
+                    print("Opção inválida!")
 
-        elif opcao1 == "3":
+        elif opcao_menu == "3":  # Ver melhores tempos
             while True:
-                opcao4 = menuDificuldade()
+                dificuldade = menu_dificuldade()
                 os.system("cls")
 
-                if opcao4 == "1":
-                    cincoMelhoresTempos("temposvitoria4bombas.txt")
+                if dificuldade == "1":
+                    cinco_melhores_tempos("tempovitoria4bombas.txt")
 
-                elif opcao4 == "2":
-                    cincoMelhoresTempos("temposvitoria4bombas.txt")
+                elif dificuldade == "2":
+                    cinco_melhores_tempos("tempovitoria6bombas.txt")
 
-                elif opcao4 == "3":
+                elif dificuldade == "3":
                     break
-                        
                 else:
-                    print("Opcao Invalida!")
+                    print("Opção inválida!")
 
-                elif opcao1 == "4":
-                    break
+        elif opcao_menu == "4":
+            break
 
-                elif:
-                    print("Opcao Invalida!")
+        else:
+            print("Opção inválida!")
 
-
-
-        if _name_ == "_main_":
-            campoMinado()
-                    
-
-                    
-                            
-                    
-
-            
-                    
-    
+if __name__ == "__main__":
+    campo_minado()
